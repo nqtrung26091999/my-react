@@ -3,23 +3,23 @@ import { act } from "react-dom/test-utils";
 
 // useState
 // 1. init state
-// 2. Actions: Up(state + 1), Down(state - 1)
+// 2. Actions
 
 // useReducer
 // 1. init state
-// 2. Actions: Up(state + 1), Down(state - 1)
+// 2. Actions
 // 3. Reducer
 // 4. Dispatch
 
 // initState
 const initState = {
   job: '',
-  jobs: [] 
+  jobs: []
 }
 
-// 2. Actions
 const SET_JOB = 'set_job'
-const SET_JOBS = 'set_jobs'
+const ADD_JOB = 'add_job'
+const DELETE_JOB = 'delete_job'
 
 const setJob = payLoad => {
   return {
@@ -30,47 +30,53 @@ const setJob = payLoad => {
 
 const addJob = payLoad => {
   return {
-    type: SET_JOBS,
+    type: ADD_JOB,
     payLoad
   }
 }
-// console.log(setJob())
 
-// 3. Reducer
-const reducer = (state, action) => {
-
-  console.log('Action', action);
-  console.log('Prev-state', state);
-
-  let newState
-
-  switch(action.type) {
-    case SET_JOB:
-      newState = {
-        ...state,
-        job: action.payLoad
-      }
-      break
-    case SET_JOBS:
-      newState = {
-        ...state,
-        jobs: [...state.jobs, action.payLoad]
-      }
-      break
-    default: 
-      throw new Error('Invalid aciton')
+const deleteJob = payLoad => {
+  return {
+    type: DELETE_JOB,
+    payLoad
   }
+}
 
-  console.log('New-state', newState);
-
+const reducer = (state, action) => {
+  let newState
+  switch (action.type) {
+    case SET_JOB:
+        newState = {
+          ...state,
+          job: action.payLoad
+        }
+      break;
+    case ADD_JOB:
+        newState = {
+          ...state,
+          jobs: [...state.jobs, action.payLoad]
+        }
+      break
+    case DELETE_JOB:
+        const newJobs = [...state.jobs]
+        newJobs.splice(action.payLoad, 1)
+        newState = {
+          ...state,
+          jobs: newJobs
+        }
+      break
+    default:
+      throw new Error('Invalid action')
+  }
+  console.log(newState);
   return newState
 }
 
 function App() {
 
   const [state, dispatch] = useReducer(reducer, initState)
-  const { job, jobs } = state
 
+  const { job, jobs } = state
   const inputRef = useRef()
 
   const handleSubmit = () => {
@@ -83,17 +89,22 @@ function App() {
     <div style={{ padding: 32 }}>
       <input
         ref={inputRef}
-        placeholder="Input your job"
         value={job}
+        placeholder="Input your job"
         onChange={e => {
           dispatch(setJob(e.target.value))
         }}
       />
       <button onClick={handleSubmit}>Add</button>
       <ul>
-        {jobs.map((job, index) => (
-          <li key={index}>{job}  &times;</li>
-        ))}
+        {jobs.map((job, index) => {
+          return(
+            <li key={index}>
+              {job}
+              <span onClick={() => dispatch(deleteJob(index))}>&times;</span>                
+            </li>
+          )
+        })}
       </ul>
     </div>
   )
