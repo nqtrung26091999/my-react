@@ -1,49 +1,46 @@
-import { useStore } from "./store";
+import { StoreContext } from "./store";
+import { useContext } from "react";
 import { actions } from "./store";
-import "./App.css"
-
+import { useRef } from "react";
+import './App.css'
 
 function App() {
-  const [state, dispatch] = useStore()
+  const [state, dispatch] = useContext(StoreContext)
 
-  const { inputTodo, todos } = state
+  const inputRef = useRef()
 
-  //. add todo
-  const handleAddTodo = () => {
-    dispatch(actions.setTodos(inputTodo))
-    actions.setInputTodo('')
+  const handleAdd = () => {
+    dispatch(actions.setTodos(state.inputTodo))
+    dispatch(actions.setInputTodo(''))
+    inputRef.current.focus()
   }
-
+  
   return (
     <div style={{ padding: 32 }}>
-      <h1>Hello world !</h1>
+      <h1>Todo app</h1>
       <input
-        value={inputTodo}
-        placeholder="Input todo..."
-        onChange={(e) => {
-          dispatch(actions.setInputTodo(e.target.value))
-        }}
+      ref={inputRef}
+        placeholder="Input your todo..."
+        value={state.inputTodo}
+        onChange={e => dispatch(actions.setInputTodo(e.target.value))}
       />
-      <button 
-        onClick={handleAddTodo} 
+      <button
+       onClick={handleAdd}
       >
         Add todo
       </button>
       <br/>
       <ul>
-        { state.todos && todos.map((todo, index) => {
+        {state.todos && state.todos.map((item, index) => {
           return(
             <li key={index}>
-              {todo}
+              {item}
               <span 
                 className="del" 
-                title="delete"
-                onClick={() => dispatch(actions.deleteTodo(index))}
-              >
-                &times;
+                onClick={() => { dispatch(actions.deleteTodo(index)) }}>
+                  &times;
               </span>
             </li>
-            
           )
         })}
       </ul>

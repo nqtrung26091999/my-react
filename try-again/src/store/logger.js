@@ -2,14 +2,12 @@ import reducer from "./reducer";
 
 function logger(reducer) {
     return (prevState, action) => {
-
         console.group(action.type)
-        console.log("PrevState: ", prevState);
-        const newState = reducer(prevState, action)
-        console.log("NewState: ", newState);
+        console.log('prevState: ', prevState)
+        console.log("Action: ", action);
+        const nextState = reducer(prevState, action)
         console.groupEnd()
-
-        return newState
+        return nextState
     }
 }
 

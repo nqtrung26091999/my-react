@@ -1,11 +1,10 @@
 import { SET_INPUT_TODO, SET_TODOS, DELETE_TODO } from './constants'
 
 export const initState = {
-    inputTodo: '',
-    todos: []
+    todos: [],
+    inputTodo: ''
 }
-
-export default function reducer(state, action) {
+function reducer(state, action) {
     switch(action.type) {
         case SET_INPUT_TODO:
             return {
@@ -24,5 +23,10 @@ export default function reducer(state, action) {
                 ...state,
                 todos: newTodos
             }
+            
+        default:
+            throw new Error('Invalid action.')
     }
 }
+
+export default reducer
